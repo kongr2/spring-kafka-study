@@ -26,3 +26,10 @@
 
 ## DLT 컨슈머 메시지 보기
 > docker exec -it <컨테이너 아이디> kafka-console-consumer --bootstrap-server localhost:9092 --topic kbus-retryable-topic-dlt --from-beginning
+
+## 메시지 발행 테스트
+> http://localhost:8080/<토픽명>/event?item=<메시지 내용>
+### 테스트 토픽 리스트
+> kbus-topic
+> kbus-error-topic
+> kbus-failed-topic
