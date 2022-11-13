@@ -30,6 +30,7 @@
 ## 메시지 발행 테스트
 > http://localhost:8080/<토픽명>/event?item=<메시지 내용>
 ### 테스트 토픽 리스트
-> kbus-topic
-> kbus-error-topic
-> kbus-failed-topic
+
+> `kbus-topic`
+> `kbus-error-topic`
+> `kbus-failed-topic`
