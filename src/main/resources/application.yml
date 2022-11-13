@@ -1,0 +1,29 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+#       isolation-level: read_committed
+#       enable-auto-commit: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#       transaction-id-prefix: "tnx-id"
+
+kbus:
+  kafka:
+    topic: kbus-topic
+    partitions: 3
+    replicas: 1
+    group: kbus-group
+    consumer-id: kbus-id
+    concurrency: 2
+    error-consumer-id: kbus-error-consumer-id
+    error-topic: kbus-error-topic
+    error-group: kbus-error-group
+    failed-topic: kbus-failed-topic
+    retryable-topic: kbus-retryable-topic
+    retryable-group: kbus-retryable-group
+    retryable-consumer-id: kbus-retryable-consumer-id
