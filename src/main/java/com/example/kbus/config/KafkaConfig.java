@@ -72,8 +72,11 @@ public class KafkaConfig {
       ConsumerFactory<String, String> consumerFactory, DefaultErrorHandler errorHandler
   ){
     ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory();
+
     factory.setConsumerFactory(consumerFactory);
+
     factory.setCommonErrorHandler(errorHandler);
+
     factory.getContainerProperties().setDeliveryAttemptHeader(true);
 
     factory.getContainerProperties().setDeliveryAttemptHeader(true);

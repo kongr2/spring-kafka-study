@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 public class NonBlockingConsumer {
 
   /**
+   * 스프링 카프카는 기본적으로 10번의 재시도를 한다.
+   *
+   *
+   *
    * 해당 토픽을 리스닝 할 경우 3초 * 2 단위로 3번 시도 후 실패시  dead letter topic 으로 전송 한다.
    * 이때 시도별 토픽은 자동으로 생성 되며, dlt 또한 자동으로 생성 하고 있다.
    * 토픽 생성 규칙은 원래 토픽 이름 + backoff value 값으로 정해진다.
