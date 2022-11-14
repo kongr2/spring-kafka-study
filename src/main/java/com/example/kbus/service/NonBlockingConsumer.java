@@ -1,13 +1,16 @@
 package com.example.kbus.service;
 
+import com.example.kbus.exception.RetryableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +41,13 @@ public class NonBlockingConsumer {
    */
   @RetryableTopic(
       attempts = "4",
-      backoff = @Backoff(value = 3000L, multiplier = 2)
+      backoff = @Backoff(value = 2000L, multiplier = 2)
   )
   @KafkaListener(
       id = "${kbus.kafka.retryable-consumer-id}",
       topics = "${kbus.kafka.retryable-topic}",
-      groupId = "${kbus.kafka.retryable-group}"
+      groupId = "${kbus.kafka.retryable-group}",
+      concurrency = "${kbus.kafka.concurrency}"
   )
   public void listen(
       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
@@ -58,12 +62,19 @@ public class NonBlockingConsumer {
         payload: {}
         =======================================================
         """, topic, Thread.currentThread().getId(),delivery,groupId, payload);
-    throw new RuntimeException("some error occured");
+    //throw new RetryableException("some error occured");
   }
 
   @DltHandler
-  public void dltHandler(@Payload String payload) {
+  public void dltHandler(
+      @Header(KafkaHeaders.ACKNOWLEDGMENT) Acknowledgment acknowledgment,
+      @Header("trace_id") String traceId,
+      @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key,
+      @Payload String payload) {
     //dlt 이벤트에 대한 핸들러
-    log.error("Received some event in dlt topic: {}", payload);
+    log.error("dlt topic -> traceId: {}, key: {},  payload: {}", traceId, key, payload);
+    //ack 처리 하지 않을 경우 dlt 토픽 메시지를 계속 읽게 된다.
+    //dlt 에 도착하는 메시지는 최종적으로 처리하는 로직과 함께 ack 처리 하도록 하자.
+    acknowledgment.acknowledge();
   }
 }

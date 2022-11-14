@@ -1,6 +1,7 @@
 package com.example.kbus.service;
 
 import com.example.kbus.exception.NotRetryableException;
+import com.example.kbus.exception.RetryableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -20,22 +21,23 @@ public class KbusErrorConsumer {
       id = "${kbus.kafka.error-consumer-id}",
       topics = "${kbus.kafka.error-topic}",
       groupId = "${kbus.kafka.error-group}",
-      errorHandler = "errorHandler"
+      errorHandler = "errorHandler" //빈으로 등록한 에러 핸들러 빈이름
   )
-  @SendTo("${kbus.kafka.failed-topic}")
+
   public void listen(
       @Header(KafkaHeaders.DELIVERY_ATTEMPT) int delivery,
       @Header(KafkaHeaders.CONSUMER) Consumer consumer,
       @Payload String payload
   ) {
-    log.info("deliver attempt: {}", delivery);
+    log.info("del@SendTo(\"${kbus.kafka.failed-topic}\")iver attempt: {}", delivery);
     log.info("ErrorPayload: {}", payload);
 
+    //기본적으로 10번 시도 하지만 여기서 3번 시도 후 중지하도록 로직 추가 함.
     if(delivery >= 3) {
       consumer.pause(consumer.assignment());
     } else {
       throw new NotRetryableException("some error occurred");
-      //throw new RetryableException("some error occurred");
+//      throw new RetryableException("some error occurred");
     }
   }
 

@@ -19,11 +19,13 @@ kbus:
     replicas: 1
     group: kbus-group
     consumer-id: kbus-id
-    concurrency: 2
+    concurrency: 5
     error-consumer-id: kbus-error-consumer-id
     error-topic: kbus-error-topic
     error-group: kbus-error-group
     failed-topic: kbus-failed-topic
+    failed-group: kbus-failed-group
+    failed-consumer-id: kbus-failed-consumer-id
     retryable-topic: kbus-retryable-topic
     retryable-group: kbus-retryable-group
     retryable-consumer-id: kbus-retryable-consumer-id

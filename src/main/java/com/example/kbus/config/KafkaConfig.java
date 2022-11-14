@@ -2,8 +2,11 @@ package com.example.kbus.config;
 
 import com.example.kbus.exception.NotRetryableException;
 import com.example.kbus.exception.RetryableException;
+import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -89,8 +92,8 @@ public class KafkaConfig {
   public KafkaListenerErrorHandler errorHandler() {
     return (message, exception) -> {
       log.info("inside error handler: {}", message);
-      //return "[FAILED] {}" + message;
-      throw new RuntimeException("inside error handler error");
+      return "[FAILED] {}" + message; //리턴 할 경우 해당 메시지로 처리 할 수 있도록 해야 한다.?
+      //throw new RuntimeException("inside error handler error");
     };
   }
 

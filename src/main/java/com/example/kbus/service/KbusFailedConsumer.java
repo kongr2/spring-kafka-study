@@ -18,15 +18,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KbusConsumer {
+public class KbusFailedConsumer {
 
   private final ObjectMapper objectMapper;
 
   @KafkaListener(
-      id = "${kbus.kafka.consumer-id}",
-      topics = "${kbus.kafka.topic}",
-      groupId = "${kbus.kafka.group}",
-      concurrency = "${kbus.kafka.concurrency}"
+      id = "${kbus.kafka.failed-consumer-id}",
+      topics = "${kbus.kafka.failed-topic}",
+      groupId = "${kbus.kafka.failed-group}",
+      errorHandler = "errorHandler" //빈으로 등록한 에러 핸들러 빈이름
   )
   public void listen(
       @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key,
@@ -40,6 +40,7 @@ public class KbusConsumer {
     try {
       Event event = objectMapper.readValue(payload, new TypeReference<Event<OrderEvent>>(){});
       log.info("""
+        [FAILED_TOPIC]
         \n
         =======================================================
         key: {}, traceId: {}, partitionId: {}, consumerId: {}, ThreadId: {}\n
